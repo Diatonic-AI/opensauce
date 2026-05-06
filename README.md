@@ -105,6 +105,8 @@ sauce init --scope user --profile dev
 
 Walk through the first-run flow at [`docs/getting-started.md`](docs/getting-started.md).
 
+Want to extend Sauce with your own skills, plugins, or MCP servers? [`docs/hobbyist-quickstart.md`](docs/hobbyist-quickstart.md) — adds L7 (local model) and L8 (agency) on top of your install.
+
 Stuck? [`docs/troubleshooting.md`](docs/troubleshooting.md).
 
 What each of the 24 binaries does: [`docs/binaries.md`](docs/binaries.md).

@@ -1,5 +1,7 @@
 # Enterprise Install — Managed Cloud Environment
 
+> **Audience: enterprise operator persona.** You run the full L9 (control / mesh / pipelines) + L10 (governance / policy / identity / audit) + L11 (delivery) + L12 (surface) stack. AWS / Azure / GCP mappings live in the framework repo's `docs/architecture/hyperscaler-alignment.md`; silo vs pool tenancy in `docs/architecture/multi-tenancy.md`. See `docs/architecture/install-ladder.md` for the full persona map.
+
 This is the path for organizations adopting Sauce at the enterprise level. **Enterprises do not self-host the Sauce Framework control plane.** That control plane runs on Diatonic-AI's private infrastructure. What enterprises receive is a **managed cloud environment** provisioned for them — SOC2 + ISO27001 compliant — that hosts their business workspaces and routes to the Sauce Framework control plane on their behalf.
 
 Single-machine / personal installs should use [`user-install.md`](user-install.md) instead.

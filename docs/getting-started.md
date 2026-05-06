@@ -1,5 +1,7 @@
 # Getting Started
 
+> **You're at L11 + L12 — the install surface.** The full 12-layer architecture (substrate → governance → surface) is documented in the framework repo's `docs/architecture/layer-stack.md`. This guide only covers the user-facing layer.
+
 After [installing](user-install.md), here's the first 5 minutes.
 
 ## 1. Verify install

@@ -1,5 +1,7 @@
 # User Install — Single Machine
 
+> **Audience: vibe-coder / hobbyist persona.** You only need L11 (delivery) + L12 (user surface), with optional L7 (local model via LM Studio) and L8 (skills / plugins / MCP) once you start extending. The deeper layers — storage, semantics, mesh control, governance — are managed for you. See the framework repo's `docs/architecture/install-ladder.md` for the full persona map.
+
 For single-user installs on your laptop or personal server. The 24 user-facing Sauce binaries on your machine.
 
 > **Data sharing default: ON.** See [§ Data sharing](#data-sharing-and-telemetry) below for what flows back to the Sauce Framework control plane and how to opt out.

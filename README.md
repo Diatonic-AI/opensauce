@@ -48,6 +48,21 @@ You install the **edge layer** from this repo. Enterprises **request a managed c
 
 ---
 
+## The 12 layers — and which ones you touch
+
+Sauce is organized as a 12-layer vertical stack (canonical model in the framework repo's `docs/architecture/layer-stack.md`). **OpenSauce ships only L11 (delivery / packaging) and L12 (user surfaces).** The deeper layers — storage, semantics, model runtime, agent contracts, mesh control, governance — live behind the binary boundary in the framework repo.
+
+| What you want | Layers you touch | Where to start |
+|---|---|---|
+| "I just want to use it." | L11 + L12 | [`docs/user-install.md`](docs/user-install.md) |
+| "I want to extend it (skills, plugins, MCP)." | + L8 (Agency) | SDK crates: `sauce-skill-sdk`, `sauce-plugin-sdk`, `sauce-mcp-sdk` (framework repo) |
+| "I run this for an org." | + L9 (Control), L10 (Governance) | [`docs/enterprise-install.md`](docs/enterprise-install.md) |
+| "I want to understand the whole thing." | L1 → L12 | Framework repo `docs/architecture/layer-stack.md` |
+
+The four-tier control-plane diagram above is *deployment topology*. The 12 layers are *what kind of concern lives where*. They are orthogonal axes — see the framework repo's `docs/architecture/README.md` § "The five axes of Sauce."
+
+---
+
 ## Two install paths
 
 ### 👤 Edge user (single machine)

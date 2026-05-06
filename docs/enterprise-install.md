@@ -1,249 +1,231 @@
-# Enterprise Install — Control Node + Tenant Onboarding
+# Enterprise Install — Managed Cloud Environment
 
-This is the path for enterprises standing up their own Sauce control plane: register with Sauce Global, own a domain, manage tenants under it.
+This is the path for organizations adopting Sauce at the enterprise level. **Enterprises do not self-host the Sauce Framework control plane.** That control plane runs on Diatonic-AI's private infrastructure. What enterprises receive is a **managed cloud environment** provisioned for them — SOC2 + ISO27001 compliant — that hosts their business workspaces and routes to the Sauce Framework control plane on their behalf.
 
 Single-machine / personal installs should use [`user-install.md`](user-install.md) instead.
 
-## Prerequisites
-
-- A DNS domain you control (e.g. `acme.example.com`)
-- A Linux host or Kubernetes cluster for the control node:
-  - **Single-node**: 4 vCPU, 8 GB RAM, 50 GB disk minimum
-  - **Cluster**: any conformant Kubernetes ≥ 1.28 (EKS / AKS / GKE / on-prem)
-- A Sauce Global enterprise license key (request at [https://saucetech.io/enterprise](https://saucetech.io/enterprise))
-- An OIDC identity provider (Auth0, Okta, Keycloak, or cloud-native Entra / Cognito / Cloud Identity)
-- A Postgres-compatible database for the control plane state (≥ 15.x recommended)
-- An object store (S3 / Azure Blob / GCS) for tenant artifacts
-
-## Architecture overview
+## How enterprise Sauce works
 
 ```
-Sauce Global (Diatonic-AI managed)
-       │
-       ▼  enrollment + license + telemetry
-┌─────────────────────────────────────────┐
-│ Your Enterprise Control Node            │
-│   ┌─────────────────────────────────┐   │
-│   │ Domain: acme.example.com        │   │
-│   │   ├── Workspace: acme-platform  │   │
-│   │   │     ├── Tenant: globex      │   │
-│   │   │     └── Tenant: initech     │   │
-│   │   └── Workspace: acme-marketing │   │
-│   └─────────────────────────────────┘   │
-└─────────────────────────────────────────┘
-       │
-       ▼  per-user installs phone home here
-┌─────────────────────────────────────────┐
-│ Edge User Installs                      │
-│   ├── Laptop A (tenant: globex)         │
-│   ├── Laptop B (tenant: globex)         │
-│   └── Laptop C (tenant: initech)        │
-└─────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│ Sauce Framework Control Plane                                    │
+│  (private — runs on Diatonic-AI's infrastructure)                │
+│  - Fleet management / version reconciliation                     │
+│  - License compliance / seat tracking                            │
+│  - Telemetry + log ingest                                        │
+│  - Provisions enterprise cloud environments                      │
+└──────────────────────────────────────────────────────────────────┘
+                          │ provisions + manages
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Your Enterprise Cloud Environment                                │
+│  (cloud-hosted, SOC2 Type II + ISO 27001)                        │
+│  Region(s) of your choice — AWS / Azure / GCP                    │
+│  - Per-enterprise tenancy + isolation                            │
+│  - Compliance audit logging                                      │
+│  - Identity federation (your OIDC issuer)                        │
+│  - Data residency enforcement                                    │
+└──────────────────────────────────────────────────────────────────┘
+                          │ hosts
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Business Workspaces                                              │
+│  Local-first, scale to your enterprise cloud env when needed     │
+│  - Multi-user shared filesystem workbench                        │
+│  - Run on a workspace lead's machine until usage justifies cloud │
+│  - One-command promotion to cloud (data + state migrate)         │
+└──────────────────────────────────────────────────────────────────┘
+                          │ serves
+                          ▼
+┌──────────────────────────────────────────────────────────────────┐
+│ Edge User Installs                                               │
+│  Per-user laptops / dev boxes                                    │
+│  - Standard install via opensauce/install.sh                     │
+│  - Auto-enrolled into a workspace via enterprise enrollment      │
+│  - Telemetry / logs / cookies route through the enterprise env   │
+│    (not directly to Sauce Framework — your data stays in your    │
+│    cloud env first, then aggregated forward)                     │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-## Single-node install
+You **never** stand up our control plane. We do. You get a managed cloud environment with a UI, an API, and a billing relationship.
 
-For small enterprises or pilot deployments. One Linux host hosts the entire control plane.
+## Getting an enterprise environment
 
-### 1. Install the binaries
+### 1. Request
+
+Email: **enterprise@saucetech.io** with:
+- Organization name + primary domain
+- Approximate seat count
+- Cloud preference (AWS / Azure / GCP / multi)
+- Region(s) for data residency
+- Compliance requirements beyond SOC2/ISO27001 (HIPAA, FedRAMP, PCI, etc.)
+- Identity provider (Okta / Auth0 / Entra / Cognito / Cloud Identity / Keycloak)
+
+### 2. Provisioning (we do this)
+
+Within typically 3 business days, we provision:
+
+- **Dedicated VPC / VNet / project** in your chosen cloud + region
+- **Managed Kubernetes cluster** (EKS / AKS / GKE) sized for your seat count
+- **Sauce control-plane components** (sauce-edge, sauce-policy-engine, sauce-shadow-ledger, sauce-trace-collector) — same components that run on the Sauce Framework control plane on daclab-asus, but scoped to your enterprise
+- **Per-enterprise Postgres** (managed RDS / Azure SQL / Cloud SQL) with row-level tenant isolation
+- **Per-enterprise object store** (S3 / Azure Blob / GCS) with KMS-managed encryption
+- **OIDC federation** with your identity provider
+- **DNS subdomain** under your primary domain (e.g. `sauce.acme.example.com`) with TLS via Let's Encrypt or your CA
+- **Compliance logging** — SOC2 Type II evidence streams to your retention bucket; ISO27001 control attestations available on demand
+
+You get:
+- An **enterprise admin URL** (`https://sauce.acme.example.com/admin`)
+- An **enterprise admin token** (rotated quarterly)
+- A **billing portal** linked to your subscription
+
+### 3. First-day setup
+
+Log in to the admin URL with your enterprise admin token, then:
+
+1. Define **workspaces** — usually one per product line, team, or business unit
+2. Define **tenancy mode** per workspace — `pool` (cheaper, shared) or `silo` (isolated, regulated)
+3. Generate **enrollment tokens** for users to onboard their edge installs
+
+```
+Enterprise: acme-corp
+├── Workspace: platform-engineering   (pool)
+│   ├── Tenant: globex-team           (auto-created from first enrollment)
+│   └── Tenant: initech-team
+└── Workspace: regulated-data         (silo, hardened compliance)
+    └── Tenant: finance-team          (dedicated namespace + KMS keys)
+```
+
+## Business workspaces — local-first, scale to cloud
+
+Each workspace starts as a **local shared workbench** running on one team member's machine. The workspace lead installs Sauce, designates a host, and shares a workspace endpoint over the team's VPN / Tailscale / ZeroTier.
 
 ```sh
+# On the workspace lead's machine:
 sudo dpkg -i sauce-framework_0.1.0-1_amd64.deb
+sauce workspace init \
+  --enterprise-token $ENTERPRISE_TOKEN \
+  --workspace platform-engineering \
+  --bind 0.0.0.0:9001 \
+  --share-fs ~/work/shared-fs
 ```
 
-The `.deb` ships the 24 user-facing binaries. For the cluster / ops / dusa tiers (needed for control-node operation), see the [tier downloads page](https://saucetech.io/tiers) — these install side-by-side and require a per-tier license entitlement.
-
-### 2. Bootstrap the enterprise
+Team members then point their edge installs at the workspace:
 
 ```sh
-sudo sauce enterprise bootstrap \
-  --domain acme.example.com \
-  --license-key $SAUCE_LICENSE_KEY \
-  --oidc-issuer https://auth.acme.example.com/realms/acme \
-  --db-url postgresql://sauce:$DB_PASS@localhost:5432/sauce \
-  --object-store s3://acme-sauce-artifacts \
-  --control-plane-endpoint https://control.acme.example.com
+sauce enroll --workspace https://lead-machine.tailnet:9001
+```
+
+The lead's machine hosts the multi-user shared filesystem workbench. State stays local.
+
+### Promote local → cloud
+
+When usage outgrows the local host (more concurrent users, more compute, more storage, durability concerns), one command promotes the workspace to the cloud:
+
+```sh
+sauce workspace promote --to enterprise-cloud
 ```
 
 This:
-1. Validates the license key against Sauce Global
-2. Creates the `Enterprise` and root `Domain` records
-3. Provisions the systemd units (`sauce-control.service`, `sauce-edge.service`, `sauce-policy.service`)
-4. Issues the enterprise root certificate (used to sign tenant tokens)
-5. Registers the control node with Sauce Global
+1. Snapshots local state + filesystem
+2. Provisions the workspace in the enterprise cloud env (idempotent — if it already exists, just promotes data)
+3. Migrates data via the SOC2-compliant transfer pipeline
+4. Re-routes the workspace endpoint to the cloud URL
+5. Edge user installs auto-discover the new endpoint via DNS
 
-### 3. Verify
+Total downtime: typically under 10 minutes for workspaces under 100 GB.
 
-```sh
-sudo systemctl status sauce-control
-sauce enterprise info
-sauce global ping
-```
-
-Expected: control plane healthy, registered with Sauce Global, license valid.
-
-## Kubernetes install
-
-For production / larger enterprises. Run the control plane as a stateful service in your cluster.
-
-### 1. Add the Helm repo
-
-```sh
-helm repo add opensauce https://charts.opensauce.diatonic.ai
-helm repo update
-```
-
-### 2. Install the operator
-
-```sh
-helm install sauce-operator opensauce/sauce-k8s-operator \
-  --namespace sauce-system \
-  --create-namespace \
-  --set licenseKey=$SAUCE_LICENSE_KEY
-```
-
-### 3. Create the Enterprise CRD
-
-```yaml
-# enterprise.yaml
-apiVersion: sauce.diatonic.ai/v1
-kind: Enterprise
-metadata:
-  name: acme-corp
-spec:
-  primaryDomain: acme.example.com
-  globalControlPlane: https://global.saucetech.io
-  oidcIssuer: https://auth.acme.example.com/realms/acme
-  database:
-    secretRef: sauce-db-credentials
-  objectStore:
-    type: s3
-    bucket: acme-sauce-artifacts
-    region: us-east-1
-```
-
-```sh
-kubectl apply -f enterprise.yaml -n sauce-system
-```
-
-The operator reconciles → creates Domain + Workspace CRDs, issues certs, registers with Sauce Global.
-
-## Adding workspaces + tenants
-
-### Workspace
-
-```yaml
-apiVersion: sauce.diatonic.ai/v1
-kind: Workspace
-metadata:
-  name: acme-platform
-  namespace: sauce-system
-spec:
-  domain: acme.example.com
-  cluster: us-east-1-prod
-  tenancyMode: pool         # or: silo
-```
-
-### Tenant
-
-```yaml
-apiVersion: sauce.diatonic.ai/v1
-kind: Tenant
-metadata:
-  name: tenant-globex
-  namespace: acme-platform
-spec:
-  workspace: acme-platform
-  billingId: ACME-001
-  isolationLevel: standard  # standard | hardened | regulated
-  initialAdmins:
-    - email: admin@globex.example.com
-```
-
-The operator handles namespace creation (silo) or tenant-row insertion (pool), DB row-level security setup, secret bootstrap, and ingress route creation.
+After promotion, the lead's local machine becomes a **regular edge install** — same workspace, no special status.
 
 ## Onboarding edge users
 
-Each edge user enrolls into a tenant via:
+Each user runs the standard edge install (see [`user-install.md`](user-install.md)), then enrolls:
 
 ```sh
-# admin generates a one-time enrollment token
-sauce tenant enroll-token --tenant globex --user alice@globex.example.com
+# Admin generates a one-time enrollment token via the enterprise admin UI
+# (or programmatically: sauce enterprise tenant enroll-token --user alice@globex.com)
 
-# user installs Sauce on their machine, then:
+# User enrolls their install:
 sauce enroll --token $ENROLLMENT_TOKEN
 ```
 
-After enrollment:
-- The user's local install registers with the enterprise control node
-- The control node registers the user-install with Sauce Global
-- Local `sauce init` provisions per-user `.sauce/` with tenant-scoped credentials
-- All future telemetry from this install routes through the enterprise control node
+After enrollment, the edge install:
+- Routes telemetry / logs / cookies through the enterprise cloud env (not directly to Sauce Framework)
+- Authenticates via your OIDC issuer
+- Receives workspace-scoped capability gates
+- Falls under your enterprise's data-residency + compliance posture
 
-## Upgrade
+## What lives where
 
-### Single-node
-```sh
-curl -fsSL -O https://github.com/Diatonic-AI/opensauce/releases/latest/download/sauce-framework_<version>-1_amd64.deb
-sudo dpkg -i sauce-framework_<version>-1_amd64.deb
-sudo systemctl restart sauce-control
-sauce enterprise check-version
-```
+| Layer | Where | Operator | Data residency |
+|---|---|---|---|
+| Sauce Framework control plane | daclab-asus (Diatonic-AI private infra) | Diatonic-AI | n/a — control-plane only, no enterprise data |
+| Enterprise cloud env | Your chosen cloud + region | Diatonic-AI (managed) | Pinned to your region(s) |
+| Business workspace (local) | Workspace lead's machine | Your team | Lead's machine |
+| Business workspace (cloud) | Inside your enterprise cloud env | Diatonic-AI (managed) | Pinned to your region(s) |
+| Edge user install | Each user's machine | The user | The user's machine |
 
-### Kubernetes
-```sh
-helm upgrade sauce-operator opensauce/sauce-k8s-operator
-kubectl rollout status -n sauce-system deployment/sauce-operator
-```
+**Your enterprise data never traverses the Sauce Framework control plane.** It lives in your enterprise cloud env, governed by your contracted SOC2/ISO27001 controls. Sauce Framework's view of your enterprise is limited to: enterprise ID, license entitlement, version compliance, anonymized aggregate telemetry.
 
-The operator handles staged rollout: control-plane first, then per-namespace edge proxies, then announces availability for tenant migrations.
+## Compliance posture
+
+Every enterprise cloud env ships with:
+
+- **SOC 2 Type II** — annual audit, evidence streams to your retention bucket
+- **ISO 27001** — Annex A controls implemented + attested
+- **Per-tenant audit log** — append-only via `sauce-shadow-ledger`
+- **KMS-managed encryption** at rest, TLS 1.3 in transit
+- **Capability gates** locked to `hardened` mode by default (no `fs_write` / `bash_run` for tenants without explicit per-policy allowlists)
+
+Optional add-ons (per request):
+- **HIPAA** — BAA available, enforced silo-only mode for relevant workspaces
+- **FedRAMP** — High baseline, GovCloud / Azure Government / Assured Workloads deployment
+- **PCI DSS** — dedicated VPC + KMS + attested controls
+
+## Pricing model
+
+Enterprise pricing is per-seat per-month with optional add-ons for compliance, regions, and silo-mode workspaces. Get a quote via the enterprise email above.
+
+## Upgrade path
+
+Sauce Framework releases new versions on the public opensauce repo. Your enterprise cloud env receives upgrades:
+
+- **Patch versions** (`0.1.x`) — auto-applied within 7 days
+- **Minor versions** (`0.x.0`) — opt-in, deployed during your maintenance window
+- **Major versions** (`x.0.0`) — opt-in, requires explicit acceptance + migration playbook review
+
+Edge user installs upgrade independently via standard apt / msiexec / install.sh. The enterprise cloud env handles version-skew compatibility (always supports current + previous minor for ≥ 6 months).
 
 ## Backup + DR
 
-```sh
-sauce enterprise backup --output s3://acme-sauce-backups/$(date +%Y-%m-%d)
-```
+Backups are taken automatically by Diatonic-AI on a 4-hour cadence with 30-day retention (longer retention available per contract). DR runbooks are part of your enterprise SLA.
 
-Backed up: enterprise CRDs, all workspace/tenant configs, root cert + signing keys (encrypted), control plane DB snapshot, audit log (last 90 days).
+You can request an off-cycle backup at any time via the admin UI.
 
-DR restore: see the [DR runbook](https://saucetech.io/dr) (enterprise license required to access).
+## Migration from local-only / per-user installs
 
-## Compliance
+If your organization currently runs Sauce as a fleet of edge user installs (no enterprise env), you can migrate:
 
-Each enterprise install can elect compliance mode at bootstrap:
+1. Provision the enterprise env (steps above)
+2. Issue enrollment tokens to existing users
+3. Users run `sauce enroll --token $TOKEN` — their existing local state stays; future telemetry routes through the enterprise env
+4. (Optional) Migrate per-user `.sauce/` trees to the enterprise via `sauce workspace import-user-state`
 
-| Mode | Effects |
-|---|---|
-| `standard` | Default. Full feature set. SOC 2 baseline. |
-| `hardened` | Capability gates locked closed. No `fs_write` / `bash_run` for tenants. Audit log replicated to immutable storage. |
-| `regulated` | Hardened + dedicated KMS keys per tenant + silo-only mode + FIPS-validated TLS. HIPAA / FedRAMP track. |
+No reinstall required.
 
-```sh
-sauce enterprise set-compliance hardened
-```
+## Decommission
 
-## Sauce Global integration
+If you stop using Sauce, your enterprise env decommission process:
 
-Every enterprise install is tracked by Sauce Global for:
-- License compliance (seat count, feature entitlements)
-- Version reconciliation (which versions across the fleet)
-- Critical security advisories (CVE notifications scoped to your installed versions)
-- Optional aggregated telemetry (opt-in per `[control_plane.share_telemetry]`)
+1. Final backup → delivered to a destination of your choice
+2. 30-day reversible-deletion window
+3. Permanent deletion (cryptographic erasure of all KMS keys) — affects all data including backups
+4. Decommission attestation document delivered
 
-You retain full control: telemetry is opt-in, audit logs are local-first, your tenants' data never leaves your infrastructure.
+## Contact
 
-To verify the registration:
-
-```sh
-sauce global status
-# → Registered: 2026-05-06T12:00Z
-#   License: enterprise-pro (50 seats)
-#   Version: 0.1.0
-#   Last sync: 2 minutes ago
-```
-
-## Troubleshooting
-
-See [`troubleshooting.md`](troubleshooting.md) — has dedicated sections for control-node bring-up, license errors, OIDC misconfigurations, and Sauce Global registration issues.
-
-For enterprise-license support: ai@diatonic.ai (or your dedicated success contact).
+- **Enterprise sales**: enterprise@saucetech.io
+- **Existing customer support**: your dedicated success contact, or support@saucetech.io
+- **Privacy / data requests**: privacy@saucetech.io
+- **Security disclosures**: security@saucetech.io (PGP key on request)

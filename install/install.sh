@@ -62,7 +62,7 @@ if [ "$OS" = "linux" ] && [ "$ARCH" = "x86_64" ] && command -v dpkg >/dev/null 2
 fi
 
 # ─── per-user tarball / binary path (Linux + macOS, no sudo) ─────────
-VENDOR=Diatonic-AI
+VENDOR=SauceTech
 APP=sauce
 LIBDIR="$HOME/.local/lib/$VENDOR/$APP"
 BINDIR="$HOME/.local/bin"

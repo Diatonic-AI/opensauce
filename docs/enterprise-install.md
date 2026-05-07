@@ -2,7 +2,7 @@
 
 > **Audience: enterprise operator persona.** You run the full L9 (control / mesh / pipelines) + L10 (governance / policy / identity / audit) + L11 (delivery) + L12 (surface) stack. AWS / Azure / GCP mappings live in the framework repo's `docs/architecture/hyperscaler-alignment.md`; silo vs pool tenancy in `docs/architecture/multi-tenancy.md`. See `docs/architecture/install-ladder.md` for the full persona map.
 
-This is the path for organizations adopting Sauce at the enterprise level. **Enterprises do not self-host the Sauce Framework control plane.** That control plane runs on Diatonic-AI's private infrastructure. What enterprises receive is a **managed cloud environment** provisioned for them — SOC2 + ISO27001 compliant — that hosts their business workspaces and routes to the Sauce Framework control plane on their behalf.
+This is the path for organizations adopting Sauce at the enterprise level. **Enterprises do not self-host the Sauce Framework control plane.** That control plane runs on Sauce Technologies–managed infrastructure. What enterprises receive is a **managed cloud environment** provisioned for them — SOC2 + ISO27001 compliant — that hosts their business workspaces and routes to the control plane on their behalf.
 
 Single-machine / personal installs should use [`user-install.md`](user-install.md) instead.
 
@@ -11,7 +11,7 @@ Single-machine / personal installs should use [`user-install.md`](user-install.m
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ Sauce Framework Control Plane                                    │
-│  (private — runs on Diatonic-AI's infrastructure)                │
+│  (private — Sauce Technologies–managed infrastructure)           │
 │  - Fleet management / version reconciliation                     │
 │  - License compliance / seat tracking                            │
 │  - Telemetry + log ingest                                        │
@@ -70,7 +70,7 @@ Within typically 3 business days, we provision:
 
 - **Dedicated VPC / VNet / project** in your chosen cloud + region
 - **Managed Kubernetes cluster** (EKS / AKS / GKE) sized for your seat count
-- **Sauce control-plane components** (sauce-edge, sauce-policy-engine, sauce-shadow-ledger, sauce-trace-collector) — same components that run on the Sauce Framework control plane on daclab-asus, but scoped to your enterprise
+- **Sauce control-plane components** (sauce-edge, sauce-policy-engine, sauce-shadow-ledger, sauce-trace-collector) — the same components that run on the Sauce Framework control plane, scoped to your enterprise
 - **Per-enterprise Postgres** (managed RDS / Azure SQL / Cloud SQL) with row-level tenant isolation
 - **Per-enterprise object store** (S3 / Azure Blob / GCS) with KMS-managed encryption
 - **OIDC federation** with your identity provider
@@ -162,10 +162,10 @@ After enrollment, the edge install:
 
 | Layer | Where | Operator | Data residency |
 |---|---|---|---|
-| Sauce Framework control plane | daclab-asus (Diatonic-AI private infra) | Diatonic-AI | n/a — control-plane only, no enterprise data |
-| Enterprise cloud env | Your chosen cloud + region | Diatonic-AI (managed) | Pinned to your region(s) |
+| Sauce Framework control plane | Sauce Technologies–managed infrastructure | Sauce Technologies | n/a — control-plane only, no enterprise data |
+| Enterprise cloud env | Your chosen cloud + region | Sauce Technologies (managed) | Pinned to your region(s) |
 | Business workspace (local) | Workspace lead's machine | Your team | Lead's machine |
-| Business workspace (cloud) | Inside your enterprise cloud env | Diatonic-AI (managed) | Pinned to your region(s) |
+| Business workspace (cloud) | Inside your enterprise cloud env | Sauce Technologies (managed) | Pinned to your region(s) |
 | Edge user install | Each user's machine | The user | The user's machine |
 
 **Your enterprise data never traverses the Sauce Framework control plane.** It lives in your enterprise cloud env, governed by your contracted SOC2/ISO27001 controls. Sauce Framework's view of your enterprise is limited to: enterprise ID, license entitlement, version compliance, anonymized aggregate telemetry.
@@ -201,7 +201,7 @@ Edge user installs upgrade independently via standard apt / msiexec / install.sh
 
 ## Backup + DR
 
-Backups are taken automatically by Diatonic-AI on a 4-hour cadence with 30-day retention (longer retention available per contract). DR runbooks are part of your enterprise SLA.
+Backups are taken automatically by Sauce Technologies on a 4-hour cadence with 30-day retention (longer retention available per contract). DR runbooks are part of your enterprise SLA.
 
 You can request an off-cycle backup at any time via the admin UI.
 

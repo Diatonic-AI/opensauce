@@ -71,7 +71,7 @@ export LMSTUDIO_BASE_URL=http://your-host:1234
 
 **Cause**: The bash orchestrator script wasn't installed (older tarball install).
 
-**Fix**: Re-install via `.deb` or `.msi` (both bundle the script under `/usr/share/sauce/scripts/` or `Program Files\Diatonic-AI\Sauce\scripts\`).
+**Fix**: Re-install via `.deb` or `.msi` (both bundle the script under `/usr/share/sauce/scripts/` or `Program Files\SauceTech\Sauce\scripts\`).
 
 Or set the override:
 ```sh

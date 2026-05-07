@@ -47,7 +47,7 @@ if ($proc.ExitCode -ne 0) {
 Remove-Item $msiPath -Force -ErrorAction SilentlyContinue
 
 # ── PATH guidance ──
-$installBin = "C:\Program Files\Diatonic-AI\Sauce\bin"
+$installBin = "C:\Program Files\SauceTech\Sauce\bin"
 $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
 if ($userPath -notlike "*$installBin*") {
   Write-Host ""

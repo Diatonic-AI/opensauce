@@ -1,7 +1,10 @@
 # OpenSauce
 
-> **Install Sauce.** Public download + setup paths for the [Sauce Framework](https://saucetech.io).
+> **Install Sauce.** Public download + setup paths for the [Sauce Framework](https://saucetech.io) by Sauce Technologies.
 > Edge users · enterprise managed-cloud environments.
+> Six operating systems. The full Sauce agent suite.
+
+Sauce Technologies is an operating-systems partner for businesses whose growth is being throttled by invisible cost, fragmented knowledge, repeated work, and owner dependency. Sauce ships as a governed, canonical, multi-layer system — not as an AI vendor selling novelty. OpenSauce is the public install surface; the rest of the stack stays inside the framework boundary.
 
 [![Latest release](https://img.shields.io/github/v/release/Diatonic-AI/opensauce?display_name=tag&label=release)](https://github.com/Diatonic-AI/opensauce/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE-MIT)
@@ -13,7 +16,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Sauce Framework Control Plane                              │
-│  (PRIVATE — Diatonic-AI's infrastructure; you don't run it) │
+│  (PRIVATE — Sauce Technologies–managed; you don't run it)   │
 │   • fleet management • version reconciliation               │
 │   • license compliance • telemetry + log ingest             │
 │   • provisions enterprise cloud environments                │
@@ -22,7 +25,7 @@
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Enterprise Cloud Environments                              │
-│  (managed by Diatonic-AI, hosted in your chosen cloud,      │
+│  (managed by Sauce Technologies, in your chosen cloud,      │
 │   SOC 2 Type II + ISO 27001)                                │
 │   • per-enterprise tenancy • OIDC federation                │
 │   • data residency • compliance audit logging               │
@@ -44,7 +47,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-You install the **edge layer** from this repo. Enterprises **request a managed cloud environment** — you don't stand up the control plane yourself; Diatonic-AI does.
+You install the **edge layer** from this repo. Enterprises **request a managed cloud environment** — you don't stand up the control plane yourself; Sauce Technologies does.
 
 ---
 
@@ -66,7 +69,7 @@ The four-tier control-plane diagram above is *deployment topology*. The 12 layer
 ## Two install paths
 
 ### 👤 Edge user (single machine)
-Install the 24 user-facing Sauce binaries on your laptop / dev box / personal Linux server. No sudo by default.
+Install the user-facing Sauce binaries — the full agent suite at L11+L12 — on your laptop / dev box / personal Linux server. No sudo by default.
 👉 **[docs/user-install.md](docs/user-install.md)**
 
 ```sh
@@ -76,7 +79,7 @@ curl -fsSL https://raw.githubusercontent.com/Diatonic-AI/opensauce/main/install/
 ⚠️ **Default data sharing is ON** — telemetry, logs, cookies, inference traces, and pipeline outputs auto-share to the Sauce Framework control plane. See [`docs/user-install.md` § Data sharing and telemetry](docs/user-install.md#data-sharing-and-telemetry) for what's sent and how to opt out per category.
 
 ### 🏢 Enterprise (managed cloud environment)
-Your organization gets a SOC2/ISO27001-compliant cloud environment provisioned + managed by Diatonic-AI. Your business workspaces run local-first and scale to the cloud env when usage justifies.
+Your organization gets a SOC2/ISO27001-compliant cloud environment provisioned + managed by Sauce Technologies. Your business workspaces run local-first and scale to the cloud env when usage justifies.
 👉 **[docs/enterprise-install.md](docs/enterprise-install.md)**
 
 Request via: **enterprise@saucetech.io**
@@ -87,12 +90,18 @@ Request via: **enterprise@saucetech.io**
 
 Latest release: [v0.1.0](https://github.com/Diatonic-AI/opensauce/releases/tag/v0.1.0)
 
+Sauce ships across **six operating systems**: Debian / Ubuntu, RHEL / Fedora, SUSE, Alpine, macOS, and Windows.
+
 | OS | Format | Size | Direct link |
 |---|---|---|---|
 | Debian / Ubuntu (amd64) | `.deb` | 5.8 MB | [sauce-framework_0.1.0-1_amd64.deb](https://github.com/Diatonic-AI/opensauce/releases/latest/download/sauce-framework_0.1.0-1_amd64.deb) |
 | Windows x64 | `.msi` | 21 MB | [sauce-framework-0.1.0-x64.msi](https://github.com/Diatonic-AI/opensauce/releases/latest/download/sauce-framework-0.1.0-x64.msi) |
+| RHEL / Fedora (amd64) | `.rpm` | — | _v0.2.0_ |
+| Alpine (amd64) | `.apk` | — | _v0.2.0_ |
+| macOS (universal) | `.pkg` | — | _v0.2.0_ |
+| SUSE (amd64) | `.rpm` | — | _v0.2.0_ |
 
-`.rpm`, `.apk`, `.pkg` (macOS), Homebrew, winget, and Chocolatey ship in v0.2.0. See [CHANGELOG.md](CHANGELOG.md) for the roadmap.
+Homebrew, winget, and Chocolatey ship in v0.2.0. See [CHANGELOG.md](CHANGELOG.md) for the roadmap.
 
 ---
 
@@ -137,10 +146,10 @@ opensauce/
 
 | Repo | Visibility | Contains |
 |---|---|---|
-| **`Diatonic-AI/sauce-framework-rs`** | Private | Rust source, 74 binaries, 104 crates, framework architecture, control-plane Helm charts, plugin/skill/MCP authoring, the `.sauce/` protocol spec, internal CI |
-| **`Diatonic-AI/opensauce`** (this repo) | Public | Install scripts, signed release artifacts, edge-user + enterprise setup docs, troubleshooting |
+| **Sauce Framework** | Private | The full Sauce agent suite — Rust source, framework architecture, control-plane manifests, plugin / skill / MCP authoring SDKs, the `.sauce/` protocol spec, internal CI |
+| **OpenSauce** (this repo) | Public | Install scripts, signed release artifacts, edge-user + enterprise setup docs, troubleshooting |
 
-The Sauce Framework control plane runs on Diatonic-AI's private infrastructure. Source contributions to the framework happen via the licensed channel at [https://saucetech.io/contribute](https://saucetech.io/contribute).
+The Sauce Framework control plane runs on Sauce Technologies–managed infrastructure. Source contributions happen via the licensed channel at [https://saucetech.io/contribute](https://saucetech.io/contribute).
 
 You can fork this repo to customize install scripts for your environment. Bug reports and install-script PRs are welcome via [CONTRIBUTING.md](CONTRIBUTING.md).
 

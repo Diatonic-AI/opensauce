@@ -2,7 +2,7 @@
 
 > **Audience: vibe-coder / hobbyist persona.** You only need L11 (delivery) + L12 (user surface), with optional L7 (local model via LM Studio) and L8 (skills / plugins / MCP) once you start extending. The deeper layers — storage, semantics, mesh control, governance — are managed for you. See the framework repo's `docs/architecture/install-ladder.md` for the full persona map.
 
-For single-user installs on your laptop or personal server. The 24 user-facing Sauce binaries on your machine.
+For single-user installs on your laptop or personal server. The full Sauce agent suite — every user-facing Sauce binary — on your machine, across any of the six supported operating systems.
 
 > **Data sharing default: ON.** See [§ Data sharing](#data-sharing-and-telemetry) below for what flows back to the Sauce Framework control plane and how to opt out.
 
@@ -21,7 +21,7 @@ sudo dpkg -i sauce-framework_0.1.0-1_amd64.deb
 curl -fsSL https://raw.githubusercontent.com/Diatonic-AI/opensauce/main/install/install.sh | sh
 ```
 
-Installs to `~/.local/lib/Diatonic-AI/sauce/` and symlinks binaries into `~/.local/bin/`. Add to PATH if needed:
+Installs to `~/.local/lib/SauceTech/sauce/` and symlinks binaries into `~/.local/bin/`. Add to PATH if needed:
 
 ```sh
 export PATH="$HOME/.local/bin:$PATH"
@@ -63,14 +63,14 @@ sauce-pipeline --help
 sauce-tok --text "hello" --count
 ```
 
-## What gets installed (24 binaries)
+## What gets installed
 
-See [`binaries.md`](binaries.md). Categories:
+The full user-facing Sauce agent suite. See [`binaries.md`](binaries.md). Categories:
 
-- **Core (3)**: `sauce`, `sauce-mcp`, `sauce-registry`
-- **Pipeline (2)**: `sauce-pipeline`, `sauce-tok`
-- **Generalists (3)**: `sauce-classify`, `sauce-ontology`, `sauce-extract`
-- **Cartography (16)**: `sauce-cart-*` — codebase / filesystem analysis tools
+- **Core**: `sauce`, `sauce-mcp`, `sauce-registry`
+- **Pipeline**: `sauce-pipeline`, `sauce-tok`
+- **Generalists**: `sauce-classify`, `sauce-ontology`, `sauce-extract`
+- **Cartography**: `sauce-cart-*` — codebase / filesystem analysis tools
 
 ## First run
 
@@ -112,14 +112,16 @@ The control plane endpoint defaults to:
 https://control.saucetech.io/v1/ingest
 ```
 
-This is the Diatonic-AI-operated endpoint. Your data is bound by [https://saucetech.io/privacy](https://saucetech.io/privacy).
+This is the Sauce Technologies control plane. Your data is governed by [https://saucetech.io/privacy](https://saucetech.io/privacy).
 
 ### Why default ON?
 
-- Improves the model router (better task-class → model mappings)
+- Improves the canonical task-class → model routing
 - Catches regressions across the install fleet faster
 - Powers the public "Sauce Insights" dashboard (anonymized aggregates)
 - Funds continued development under the apply-only contribution model
+
+This is governed, auditable telemetry — not surveillance. Every category is opt-out per-user, per-machine. AI recommends; humans decide.
 
 If you're using Sauce as part of an **enterprise environment**, your enterprise environment receives this data first (under the SOC2/ISO27001-compliant path) and then forwards aggregated/redacted telemetry to Sauce Framework. See [enterprise-install.md](enterprise-install.md).
 
@@ -183,7 +185,7 @@ In non-interactive mode (`--quiet`, CI, scripted installs), the consent is **imp
 
 ## Phone-home / control plane
 
-Edge user installs talk to **`https://control.saucetech.io`** (the Sauce Framework control plane). This is a Diatonic-AI-operated endpoint hosted on our private infrastructure (the daclab-asus k8s control plane). Operators of enterprise environments will redirect their users' installs to a per-enterprise relay endpoint (still routed through our control plane for fleet management).
+Edge user installs talk to **`https://control.saucetech.io`** — the Sauce Technologies control plane. Operators of enterprise environments redirect their users' installs to a per-enterprise relay endpoint (still routed through the control plane for fleet management).
 
 To verify reachability:
 ```sh
@@ -209,7 +211,7 @@ msiexec /x sauce-framework-0.1.0-x64.msi
 
 ### Per-user
 ```sh
-rm -rf ~/.local/lib/Diatonic-AI/sauce/
+rm -rf ~/.local/lib/SauceTech/sauce/
 rm -f ~/.local/bin/sauce ~/.local/bin/sauce-*
 ```
 

@@ -2,7 +2,17 @@
 
 > **Audience: enterprise operator persona.** You run the full L9 (control / mesh / pipelines) + L10 (governance / policy / identity / audit) + L11 (delivery) + L12 (surface) stack. AWS / Azure / GCP mappings live in the framework repo's `docs/architecture/hyperscaler-alignment.md`; silo vs pool tenancy in `docs/architecture/multi-tenancy.md`. See `docs/architecture/install-ladder.md` for the full persona map.
 
-This is the path for organizations adopting Sauce at the enterprise level. **Enterprises do not self-host the Sauce Framework control plane.** That control plane runs on Sauce Technologies–managed infrastructure. What enterprises receive is a **managed cloud environment** provisioned for them — SOC2 + ISO27001 compliant — that hosts their business workspaces and routes to the control plane on their behalf.
+This is the path for organizations adopting Sauce at the enterprise level. **Enterprises do not self-host the Sauce Framework control plane.** That control plane runs on Sauce Technologies–managed infrastructure. What enterprises receive is a **managed cloud environment** provisioned for them, that hosts their business workspaces and routes to the control plane on their behalf.
+
+**Compliance enforced day one:** SOC 2 Type II · ISO 27001 / 27017 / 27018 / 27701 · GDPR · NIST 800-53 Mod.
+**Conditional (engaged automatically when a workload's data-class declaration triggers them):** HIPAA · PCI DSS 4.0 · CCPA / CPRA · SOX.
+A single resource flagged `data_classes: [Phi]` automatically inherits HIPAA's 6-year audit retention and KMS-backed encryption — no plumbing change required.
+
+**Crypto baseline:** TLS 1.3, AES-256-GCM via KMS, ECDSA P-256 / Ed25519, Argon2id (m=64, t=3, p=4), Tink primitives, ring / rustls under the hood. No custom crypto.
+
+**Identity:** OIDC federation; Sauce-issued JWTs use the `urn:sauce:*` claim namespace (RFC 8141) for `tenant`, `channels`, `roles`, `residency`, `dpop_jkt`, `break_glass`. DPoP-bound access tokens; every break-glass use writes to the audit ledger.
+
+**Audit retention:** 13-month SOC 2 default with per-data-class auto-escalation (Phi → 6 yr, PaymentCard → 1 yr with 3-month immediate-access window, FinancialReporting → 7 yr). WORM / object-lock applied for any retention > 13 months.
 
 Single-machine / personal installs should use [`user-install.md`](user-install.md) instead.
 

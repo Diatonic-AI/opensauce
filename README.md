@@ -6,6 +6,8 @@
 
 Sauce Technologies is an operating-systems partner for businesses whose growth is being throttled by invisible cost, fragmented knowledge, repeated work, and owner dependency. Sauce ships as a governed, canonical, multi-layer system — not as an AI vendor selling novelty. OpenSauce is the public install surface; the rest of the stack stays inside the framework boundary.
 
+**Compliance posture, day one:** SOC 2 Type II · ISO 27001 / 27017 / 27018 / 27701 · GDPR · NIST 800-53 Mod. Conditional on declared data class: HIPAA · PCI DSS 4.0 · CCPA / CPRA · SOX. **Crypto baseline:** TLS 1.3, AES-256-GCM via KMS, ECDSA P-256 / Ed25519, Argon2id, Tink primitives — no custom crypto.
+
 [![Latest release](https://img.shields.io/github/v/release/Diatonic-AI/opensauce?display_name=tag&label=release)](https://github.com/Diatonic-AI/opensauce/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE-MIT)
 

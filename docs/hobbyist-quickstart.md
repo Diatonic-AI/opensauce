@@ -75,9 +75,10 @@ plain shell scripts with a `SKILL.md` header. The shell path is the
 fastest way in.
 
 The SDK lives in the framework repo at `crates/sauce-skill-sdk/`.
-The SDK is currently early — the API surface may evolve as Sauce
-matures. Read the crate's `README.md` and `examples/` for the current
-state.
+The SDK ships a stub API surface today; method bodies are placeholders.
+The contract shape (the `Skill` trait, `SkillManifest`, input/output
+envelopes) is stable for early authoring; runtime execution lands in a
+later release. Track the crate's `CHANGELOG.md` for status.
 
 The shape of every skill is the same:
 
@@ -96,7 +97,11 @@ service.
 
 The SDK lives in the framework repo at `crates/sauce-plugin-sdk/`.
 Plugin authoring follows the same "describe in metadata, implement
-behind a trait" pattern as skills.
+behind a trait" pattern as skills. The SDK ships a stub API surface
+today; method bodies are placeholders. The contract shape (the
+`Plugin` trait, `PluginManifest`, ABI version constants) is stable for
+early authoring; runtime execution lands in a later release. Track the
+crate's `CHANGELOG.md` for status.
 
 ---
 
@@ -109,7 +114,11 @@ skill, plugin, and tool is reachable via MCP.
 If you have something Sauce doesn't expose yet (a private API, a custom
 data source, a domain-specific tool), wrap it as an MCP server. The SDK
 lives in the framework repo at `crates/sauce-mcp-sdk/`. Sauce will
-discover and bind to your server through its registry.
+discover and bind to your server through its registry. The SDK ships a
+stub API surface today; method bodies are placeholders. The contract
+shape (the `McpServer` / `McpClient` traits, `McpServerManifest`,
+transport variants) is stable for early authoring; runtime execution
+lands in a later release. Track the crate's `CHANGELOG.md` for status.
 
 ---
 
